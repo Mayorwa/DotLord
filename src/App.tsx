@@ -13,11 +13,15 @@ const App = () => {
         Array.from({ length: 6 }, () => Array(7).fill(dotValue.empty));
 
     const [playersTurn, setPlayersTurn] = useState<1|2>(1)
+    const [moveComplete, setMoveComplete] = useState<boolean>(false)
     const intervalRef= useRef<null|any>(null);
     const [boardGrid, setBoardGrid] = useState<dotValue[][]>(arrayGrid);
 
     // Methods
     useEffect(() => {
+        if(moveComplete){
+            console.log("boardGrid", boardGrid)
+        }
     }, [boardGrid])
     const updatePlayersTurn = () => {
         setPlayersTurn(playersTurn === dotValue.red ? dotValue.blue : dotValue.red);
@@ -48,9 +52,11 @@ const App = () => {
                 boardGrid[index + 1][cellIndex] !== dotValue.empty
             ) {
                 clearInterval(intervalRef.current!);
+                setMoveComplete(true);
                 intervalRef.current = null;
                 updatePlayersTurn();
             } else {
+                setMoveComplete(false);
                 index++;
             }
         }, 20);
