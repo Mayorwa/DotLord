@@ -17,7 +17,7 @@ table {
 }
 
 .leg {
-  box-shadow: 7px 7px 28px 0px rgba(50, 50, 50, 0.6);
+  box-shadow: 7px 7px 28px 0 rgba(50, 50, 50, 0.6);
   width: 80px;
   height: 6px;
   border-radius: 0 0 2px 2px;
@@ -25,22 +25,22 @@ table {
 }
 
 .right {
-  border: 0px solid #1a1a1a;
+  border: 0 solid #1a1a1a;
   float: right
 }
 
 table {
-  border: 0px solid #1a1a1a;
-  box-shadow: 7px 7px 28px 0px rgba(50, 50, 50, 0.6);
+  border: 0 solid #1a1a1a;
+  box-shadow: 7px 7px 28px 0 rgba(50, 50, 50, 0.6);
   padding: 7px 14px 7px 14px;
   border-spacing: 4px;
   border-radius: 2px 2px 0 0
 }
 
 td {
-  border: 0px solid #1a1a1a;
+  border: 0 solid #1a1a1a;
   border-radius: 2000px;
-  box-shadow: inset 7px 7px 20px 0px rgba(50, 50, 50, 0.4);
+  box-shadow: inset 7px 7px 20px 0 rgba(50, 50, 50, 0.4);
   opacity: 1;
   height: 40px;
   background: #fff
@@ -139,7 +139,7 @@ td.blue {
   }
 
   td {
-    box-shadow: inset 15px 15px 15px 0px rgba(50, 50, 50, 0.25)
+    box-shadow: inset 15px 15px 15px 0 rgba(50, 50, 50, 0.25)
   }
 
   td.red,
@@ -149,7 +149,7 @@ td.blue {
 
   .leg,
   table {
-    box-shadow: 15px 15px 15px 0px rgba(50, 50, 50, 0.3)
+    box-shadow: 15px 15px 15px 0 rgba(50, 50, 50, 0.3)
   }
 }
 
@@ -172,7 +172,7 @@ td.blue {
   }
 
   td {
-    box-shadow: inset 3px 3px 10px 0px rgba(50, 50, 50, 0.4)
+    box-shadow: inset 3px 3px 10px 0 rgba(50, 50, 50, 0.4)
   }
 
   td.red,
@@ -182,7 +182,7 @@ td.blue {
 
   .leg,
   table {
-    box-shadow: 3px 3px 10px 0px rgba(50, 50, 50, 0.6)
+    box-shadow: 3px 3px 10px 0 rgba(50, 50, 50, 0.6)
   }
 }
 
