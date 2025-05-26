@@ -64,7 +64,7 @@ const App = () => {
 
     return (
         <>
-            <div>
+            <div className="board-container">
                 Player: {dotValue[playersTurn]}
             </div>
             <div className="board">
