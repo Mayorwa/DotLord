@@ -20,9 +20,48 @@ const App = () => {
     // Methods
     useEffect(() => {
         if(moveComplete){
-            console.log("boardGrid", boardGrid)
+            hasFourConsecutiveOnes(boardGrid)
         }
     }, [boardGrid])
+
+    const hasFourConsecutiveOnes = (grid: dotValue[][]): boolean  => {
+        const directions = [
+            [0, 1],   // Right
+            [1, 0],   // Down
+            [1, 1],   // Diagonal down-right
+            [1, -1]   // Diagonal down-left
+        ];
+
+        const rows = grid.length;
+        const cols = grid[0].length;
+
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                if (grid[r][c] !== 1) continue;
+
+                for (const [dr, dc] of directions) {
+                    let count = 1;
+
+                    for (let i = 1; i < 4; i++) {
+                        const nr = r + dr * i;
+                        const nc = c + dc * i;
+
+                        if (
+                            nr < 0 || nr >= rows ||
+                            nc < 0 || nc >= cols ||
+                            grid[nr][nc] !== 1
+                        ) break;
+
+                        count++;
+                    }
+
+                    if (count === 4) return true;
+                }
+            }
+        }
+
+        return false;
+    }
     const updatePlayersTurn = () => {
         setPlayersTurn(playersTurn === dotValue.red ? dotValue.blue : dotValue.red);
     }
