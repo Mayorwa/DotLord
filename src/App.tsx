@@ -24,6 +24,7 @@ const App = () => {
         }
     }, [boardGrid])
 
+    // beginning of algo
     const hasFourConsecutiveOnes = (grid: dotValue[][]): boolean  => {
         const directions = [
             [0, 1],   // Right
@@ -59,9 +60,9 @@ const App = () => {
                 }
             }
         }
-
         return false;
     }
+    // ending of editable algo
     const updatePlayersTurn = () => {
         setPlayersTurn(playersTurn === dotValue.red ? dotValue.blue : dotValue.red);
     }
