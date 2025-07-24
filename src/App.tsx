@@ -1,21 +1,33 @@
 import {useEffect, useState, useRef} from "react";
 import './App.css'
 
+type Player = 1 | 2
+type Cell = Player | null;
+type Board = Cell[][];
+const ROWS = 6;
+const COLS = 7;
 enum dotValue {
-    empty = 0,
     red = 1,
     blue = 2,
 }
 
+const createEmptyBoard = (): Board =>
+    Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
+
 const App = () => {
 
-    const arrayGrid = () =>
-        Array.from({ length: 6 }, () => Array(7).fill(dotValue.empty));
+    const [playersTurn, setPlayersTurn] = useState<Player>(1);
+    const [boardGrid, setBoardGrid] = useState<Board>(createEmptyBoard);
 
-    const [playersTurn, setPlayersTurn] = useState<1|2>(1)
+    const [winner, setWinner] = useState<Player | null>(null);
+    const [isDraw, setIsDraw] = useState<boolean>(false);
     const [moveComplete, setMoveComplete] = useState<boolean>(false)
+
     const intervalRef= useRef<null|any>(null);
-    const [boardGrid, setBoardGrid] = useState<dotValue[][]>(arrayGrid);
+    const [lastMove, setLastMove] = useState<{row: number, col: number} | null>(null);
+
+    const [isAI, setIsAI] = useState<boolean>(false);
+    const [isAIThinking, setIsAIThinking] = useState(false);
 
     // Methods
     useEffect(() => {
@@ -25,7 +37,7 @@ const App = () => {
     }, [boardGrid])
 
     // beginning of algo
-    const hasFourConsecutiveOnes = (grid: dotValue[][]): boolean  => {
+    const hasFourConsecutiveOnes = (grid: Board): boolean  => {
         const directions = [
             [0, 1],   // Right
             [1, 0],   // Down
@@ -67,19 +79,20 @@ const App = () => {
         setPlayersTurn(playersTurn === dotValue.red ? dotValue.blue : dotValue.red);
     }
     const updateDotPiece = (cellIndex: number) => {
+        if (winner || isDraw || isAI && playersTurn === 2) return;
         if (intervalRef.current !== null) return;
         let index: number = 0;
-        if(boardGrid[index][cellIndex] !== dotValue.empty) {
+        if(boardGrid[index][cellIndex] !== null) {
             return;
         }
         index = -1
         intervalRef.current = setInterval(() => {
-            setBoardGrid((prev: dotValue[][]) => {
+            setBoardGrid((prev: Board) => {
                 const newGrid = prev.map(row => [...row]); // Deep copy
 
                 // Clear previous cell
                 if (index > 0) {
-                    newGrid[index - 1][cellIndex] = dotValue.empty;
+                    newGrid[index - 1][cellIndex] = null;
                 }
 
                 // Set current cell
@@ -89,12 +102,18 @@ const App = () => {
             });
             if (
                 index === boardGrid.length - 1 ||
-                boardGrid[index + 1][cellIndex] !== dotValue.empty
+                boardGrid[index + 1][cellIndex] !== null
             ) {
                 clearInterval(intervalRef.current!);
-                setMoveComplete(true);
                 intervalRef.current = null;
-                updatePlayersTurn();
+                setMoveComplete(true);
+                if(checkWinner(boardGrid, index, cellIndex, playersTurn)){
+                    setWinner(playersTurn);
+                }else if (boardGrid.every(row => row.every(cell => cell !== null))) {
+                    setIsDraw(true);
+                } else {
+                    updatePlayersTurn();
+                }
             } else {
                 setMoveComplete(false);
                 index++;
@@ -102,27 +121,51 @@ const App = () => {
         }, 20);
     }
 
+    const resetGame = () => {
+        setBoardGrid(createEmptyBoard());
+        setPlayersTurn(1);
+        setWinner(null);
+        setIsDraw(false);
+        setLastMove(null);
+        setIsAI(false);
+        setIsAIThinking(false);
+    };
+    const getGameStatus = () => {
+        if (winner) return isAI ? "AI Wins! 🤖" : `Player ${playersTurn} Wins! 🎉` ;
+        if (isDraw) return "It's a Draw! 🤝";
+        if (isAI) return isAIThinking ? "AI is thinking... 🤔" : "AI's Turn";
+        return `Player ${playersTurn}'s Turn(${dotValue[playersTurn]})`;
+    };
+
     return (
         <>
             <div className="board-container">
-                Player: {dotValue[playersTurn]}
+                {getGameStatus()}
             </div>
             <div className="board">
                 <table>
                     <tbody>
-                        {boardGrid.map((row, rowIndex) => (
-                            <tr key={rowIndex}>
-                                {row.map((cell, cellIndex) => (
-                                    <td id={`color${rowIndex}${cellIndex}`} onClick={() => updateDotPiece(cellIndex)} key={`${rowIndex}${cellIndex}`} className={`${dotValue[cell]}`}></td>
-                                ))}
-                            </tr>
-                        )) }
+                    {boardGrid.map((row, rowIndex) => (
+                        <tr key={rowIndex}>
+                            {row.map((cell, cellIndex) => (
+                                <td id={`color${rowIndex}${cellIndex}`} onClick={() => updateDotPiece(cellIndex)}
+                                    key={`${rowIndex}${cellIndex}`} className={`${cell && dotValue[cell]}`}></td>
+                            ))}
+                        </tr>
+                    ))}
                     </tbody>
                 </table>
                 <div className="left leg"></div>
                 <div className="right leg"></div>
             </div>
-
+            <div className="board-reset">
+                <button
+                    onClick={resetGame}
+                    className="board-reset-button"
+                >
+                    New Game
+                </button>
+            </div>
         </>
     )
 }
