@@ -14,6 +14,18 @@ enum dotValue {
 const createEmptyBoard = (): Board =>
     Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
 
+
+const checkWinner = (board: Board, row: number, col: number, player: Player): boolean => {
+    const directions = [
+        [0, 1],   // horizontal
+        [1, 0],   // vertical
+        [1, 1],   // diagonal down-right
+        [1, -1],  // diagonal down-left
+    ];
+
+    return false;
+};
+
 const App = () => {
 
     const [playersTurn, setPlayersTurn] = useState<Player>(1);
