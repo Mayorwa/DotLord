@@ -22,6 +22,21 @@ const checkWinner = (board: Board, row: number, col: number, player: Player): bo
         [1, 1],   // diagonal down-right
         [1, -1],  // diagonal down-left
     ];
+    for (const [dRow, dCol] of directions) {
+        let count = 1;
+
+        // Check in positive direction
+        for (let i = 1; i < 4; i++) {
+            const newRow = row + dRow * i;
+            const newCol = col + dCol * i;
+            if (newRow >= 0 && newRow < ROWS && newCol >= 0 && newCol < COLS &&
+                board[newRow][newCol] === player) {
+                count++;
+            } else {
+                break;
+            }
+        }
+    }
 
     return false;
 };
