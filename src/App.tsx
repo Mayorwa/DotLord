@@ -65,7 +65,6 @@ const App = () => {
     const [moveComplete, setMoveComplete] = useState<boolean>(false)
 
     const intervalRef= useRef<null|any>(null);
-    const [lastMove, setLastMove] = useState<{row: number, col: number} | null>(null);
 
     const [isAI, setIsAI] = useState<boolean>(false);
     const [isAIThinking, setIsAIThinking] = useState(false);
@@ -167,7 +166,6 @@ const App = () => {
         setPlayersTurn(1);
         setWinner(null);
         setIsDraw(false);
-        setLastMove(null);
         setIsAI(false);
         setIsAIThinking(false);
     };
