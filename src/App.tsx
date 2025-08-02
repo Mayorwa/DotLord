@@ -36,6 +36,20 @@ const checkWinner = (board: Board, row: number, col: number, player: Player): bo
                 break;
             }
         }
+
+        // Check in negative direction
+        for (let i = 1; i < 4; i++) {
+            const newRow = row - dRow * i;
+            const newCol = col - dCol * i;
+            if (newRow >= 0 && newRow < ROWS && newCol >= 0 && newCol < COLS &&
+                board[newRow][newCol] === player) {
+                count++;
+            } else {
+                break;
+            }
+        }
+
+        if (count >= 4) return true;
     }
 
     return false;
