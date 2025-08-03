@@ -76,7 +76,6 @@ const App = () => {
         }
     }, [boardGrid])
 
-    // beginning of algo
     const hasFourConsecutiveOnes = (grid: Board): boolean  => {
         const directions = [
             [0, 1],   // Right
