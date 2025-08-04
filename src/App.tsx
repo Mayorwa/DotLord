@@ -113,7 +113,7 @@ const App = () => {
         }
         return false;
     }
-    // ending of editable algo
+
     const updatePlayersTurn = () => {
         setPlayersTurn(playersTurn === dotValue.red ? dotValue.blue : dotValue.red);
     }
