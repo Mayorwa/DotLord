@@ -3,6 +3,7 @@
 body {
   font-family: "IBM Plex Sans", sans-serif;
 }
+
 i {
   border-radius: 21px;
   padding: 9px;
@@ -14,6 +15,7 @@ i {
 table {
   width: 100%;
 }
+
 .board-container{
   text-align: center;
 }
