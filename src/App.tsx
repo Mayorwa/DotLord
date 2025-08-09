@@ -5,6 +5,7 @@ type Player = 1 | 2
 type Cell = Player | null;
 type Board = Cell[][];
 const ROWS = 6;
+const AI_DEPTH = 6;
 const COLS = 7;
 enum dotValue {
     red = 1,
@@ -14,6 +15,17 @@ enum dotValue {
 const createEmptyBoard = (): Board =>
     Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
 
+const getValidColumns = (board: Board): number[] => {
+    return Array.from({ length: COLS }, (_, i) => i).filter(col => board[0][col] === null);
+};
+
+const minimax = (board: Board, depth: number, alpha: number, beta: number, maximizingPlayer: boolean, player: Player): [number, number | null] => {
+};
+
+const getBestMove = (board: Board, player: Player): number => {
+    const [, bestCol] = minimax(board, AI_DEPTH, -Infinity, Infinity, true, player);
+    return bestCol !== null ? bestCol : getValidColumns(board)[0];
+};
 
 const checkWinner = (board: Board, row: number, col: number, player: Player): boolean => {
     const directions = [
