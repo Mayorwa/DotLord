@@ -20,6 +20,57 @@ const getValidColumns = (board: Board): number[] => {
 };
 
 const minimax = (board: Board, depth: number, alpha: number, beta: number, maximizingPlayer: boolean, player: Player): [number, number | null] => {
+    const validCols = getValidColumns(board);
+    const isTerminal = isTerminalNode(board);
+
+    if (depth === 0 || isTerminal) {
+        if (isTerminal) {
+            if (checkWinnerAI(board, player)) return [100000000, null];
+            else if (checkWinnerAI(board, player === 1 ? 2 : 1)) return [-100000000, null];
+            else return [0, null]; // Draw
+        } else {
+            return [evaluateBoard(board, player), null];
+        }
+    }
+
+    if (maximizingPlayer) {
+        let maxEvaluation = -Infinity;
+        let bestCol = validCols[0];
+
+        for (const col of validCols) {
+            const newBoard = dropPieceAI(board, col, player);
+            const [evaluation] = minimax(newBoard, depth - 1, alpha, beta, false, player);
+
+            if (evaluation > maxEvaluation) {
+                maxEvaluation = evaluation;
+                bestCol = col;
+            }
+
+            alpha = Math.max(alpha, evaluation);
+            if (beta <= alpha) break; // Alpha-beta pruning
+        }
+
+        return [maxEvaluation, bestCol];
+    } else {
+        let minEvaluation = Infinity;
+        let bestCol = validCols[0];
+
+        for (const col of validCols) {
+            const opponent = player === 1 ? 2 : 1;
+            const newBoard = dropPieceAI(board, col, opponent);
+            const [evaluation] = minimax(newBoard, depth - 1, alpha, beta, true, player);
+
+            if (evaluation < minEvaluation) {
+                minEvaluation = evaluation;
+                bestCol = col;
+            }
+
+            beta = Math.min(beta, evaluation);
+            if (beta <= alpha) break; // Alpha-beta pruning
+        }
+
+        return [minEvaluation, bestCol];
+    }
 };
 
 const getBestMove = (board: Board, player: Player): number => {
