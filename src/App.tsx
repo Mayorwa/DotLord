@@ -260,7 +260,7 @@ const App = () => {
 
     const intervalRef= useRef<null|any>(null);
 
-    const [isAI, setIsAI] = useState<boolean>(false);
+    const [isAI, setIsAI] = useState<boolean>(true);
     const [isAIThinking, setIsAIThinking] = useState(false);
 
     // Methods
@@ -353,6 +353,42 @@ const App = () => {
             }
         }, 20);
     }
+
+    useEffect(() => {
+        if (playersTurn === 2 && !winner && !isDraw) {
+            setIsAIThinking(true);
+
+            // Add delay for AI thinking animation
+            setTimeout(() => {
+                const aiCol = getBestMove(boardGrid, 2);
+                const newBoard = boardGrid.map(row => [...row]);
+
+                // Find the lowest empty row in the column
+                for (let row = ROWS - 1; row >= 0; row--) {
+                    if (newBoard[row][aiCol] === null) {
+                        setIsAIThinking(false);
+
+                        // Add piece with animation delay
+                        setTimeout(() => {
+                            newBoard[row][aiCol] = 2;
+                            setBoardGrid(newBoard);
+
+                            // Check for winner
+                            if (checkWinner(newBoard, row, aiCol, 2)) {
+                                setWinner(2);
+                            } else if (newBoard.every(row => row.every(cell => cell !== null))) {
+                                setIsDraw(true);
+                            } else {
+                                setPlayersTurn(1); // Switch back to human
+                            }
+                        }, 100);
+
+                        break;
+                    }
+                }
+            }, 1000); // AI thinking delay
+        }
+    }, [playersTurn, boardGrid, winner, isDraw]);
 
     const resetGame = () => {
         setBoardGrid(createEmptyBoard());
