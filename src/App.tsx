@@ -15,8 +15,76 @@ enum dotValue {
 const createEmptyBoard = (): Board =>
     Array(ROWS).fill(null).map(() => Array(COLS).fill(null));
 
+// AI Evaluation function
+const evaluateWindow = (window: Cell[], player: Player): number => {
+    const opponent = player === 1 ? 2 : 1;
+    let score = 0;
+
+    const playerCount = window.filter(cell => cell === player).length;
+    const opponentCount = window.filter(cell => cell === opponent).length;
+    const emptyCount = window.filter(cell => cell === null).length;
+
+    if (playerCount === 4) score += 100;
+    else if (playerCount === 3 && emptyCount === 1) score += 10;
+    else if (playerCount === 2 && emptyCount === 2) score += 2;
+
+    if (opponentCount === 3 && emptyCount === 1) score -= 80;
+    else if (opponentCount === 2 && emptyCount === 2) score -= 5;
+
+    return score;
+};
+
+const evaluateBoard = (board: Board, player: Player): number => {
+    let score = 0;
+
+    // Score center column preference
+    const centerCol = Math.floor(COLS / 2);
+    const centerCount = board.map(row => row[centerCol]).filter(cell => cell === player).length;
+    score += centerCount * 3;
+
+    // Score horizontal
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS - 3; col++) {
+            const window = board[row].slice(col, col + 4);
+            score += evaluateWindow(window, player);
+        }
+    }
+
+    // Score vertical
+    for (let col = 0; col < COLS; col++) {
+        for (let row = 0; row < ROWS - 3; row++) {
+            const window = [board[row][col], board[row + 1][col], board[row + 2][col], board[row + 3][col]];
+            score += evaluateWindow(window, player);
+        }
+    }
+
+    // Score diagonal (positive slope)
+    for (let row = 0; row < ROWS - 3; row++) {
+        for (let col = 0; col < COLS - 3; col++) {
+            const window = [board[row][col], board[row + 1][col + 1], board[row + 2][col + 2], board[row + 3][col + 3]];
+            score += evaluateWindow(window, player);
+        }
+    }
+
+    // Score diagonal (negative slope)
+    for (let row = 0; row < ROWS - 3; row++) {
+        for (let col = 3; col < COLS; col++) {
+            const window = [board[row][col], board[row + 1][col - 1], board[row + 2][col - 2], board[row + 3][col - 3]];
+            score += evaluateWindow(window, player);
+        }
+    }
+
+    return score;
+};
+
 const getValidColumns = (board: Board): number[] => {
     return Array.from({ length: COLS }, (_, i) => i).filter(col => board[0][col] === null);
+};
+
+const isTerminalNode = (board: Board): boolean => {
+    return getValidColumns(board).length === 0 ||
+        checkWinnerAI(board, 1) ||
+        checkWinnerAI(board, 2);
 };
 
 const minimax = (board: Board, depth: number, alpha: number, beta: number, maximizingPlayer: boolean, player: Player): [number, number | null] => {
@@ -76,6 +144,69 @@ const minimax = (board: Board, depth: number, alpha: number, beta: number, maxim
 const getBestMove = (board: Board, player: Player): number => {
     const [, bestCol] = minimax(board, AI_DEPTH, -Infinity, Infinity, true, player);
     return bestCol !== null ? bestCol : getValidColumns(board)[0];
+};
+
+const checkWinnerAI = (board: Board, player: Player): boolean => {
+    // Check horizontal
+    for (let row = 0; row < ROWS; row++) {
+        for (let col = 0; col < COLS - 3; col++) {
+            if (board[row][col] === player &&
+                board[row][col + 1] === player &&
+                board[row][col + 2] === player &&
+                board[row][col + 3] === player) {
+                return true;
+            }
+        }
+    }
+
+    // Check vertical
+    for (let col = 0; col < COLS; col++) {
+        for (let row = 0; row < ROWS - 3; row++) {
+            if (board[row][col] === player &&
+                board[row + 1][col] === player &&
+                board[row + 2][col] === player &&
+                board[row + 3][col] === player) {
+                return true;
+            }
+        }
+    }
+
+    // Check diagonal (positive)
+    for (let row = 0; row < ROWS - 3; row++) {
+        for (let col = 0; col < COLS - 3; col++) {
+            if (board[row][col] === player &&
+                board[row + 1][col + 1] === player &&
+                board[row + 2][col + 2] === player &&
+                board[row + 3][col + 3] === player) {
+                return true;
+            }
+        }
+    }
+
+    // Check diagonal (negative)
+    for (let row = 0; row < ROWS - 3; row++) {
+        for (let col = 3; col < COLS; col++) {
+            if (board[row][col] === player &&
+                board[row + 1][col - 1] === player &&
+                board[row + 2][col - 2] === player &&
+                board[row + 3][col - 3] === player) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+};
+
+const dropPieceAI = (board: Board, col: number, player: Player): Board => {
+    const newBoard = board.map(row => [...row]);
+    for (let row = ROWS - 1; row >= 0; row--) {
+        if (newBoard[row][col] === null) {
+            newBoard[row][col] = player;
+            break;
+        }
+    }
+    return newBoard;
 };
 
 const checkWinner = (board: Board, row: number, col: number, player: Player): boolean => {
