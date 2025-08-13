@@ -16,6 +16,10 @@ table {
   width: 100%;
 }
 
+.board-header{
+  text-align: center;
+}
+
 .board-container{
   text-align: center;
 }

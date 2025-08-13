@@ -407,6 +407,7 @@ const App = () => {
 
     return (
         <>
+            <h2 className="board-header">4 in a Row vs AI</h2>
             <div className="board-container">
                 {getGameStatus()}
             </div>
